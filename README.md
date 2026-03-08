@@ -11,7 +11,7 @@ One script to go from zero to a fully secured, multi-agent AI assistant on Disco
 - **WAL Protocol** — Write-Ahead Log for corrections, decisions, and details that survive context loss
 - **Working Buffer** — Danger zone logging to survive context compaction without losing work
 - **Discord integration** — Bot bound to your server with channel-per-agent routing
-- **Web dashboard** — NanoFlow Console with chat, file browser, terminal, cost analytics (optional)
+- **Web dashboard** — ClawSuite Console with chat, file browser, terminal, cost analytics (optional)
 - **Env-based secrets** — All API keys in `.env`, never in config files
 - **Automated security audits** — Security agent runs scheduled hardening checks
 - **Knowledge graph** — Graphthulhu for structured memory across agents (optional)
@@ -111,10 +111,10 @@ During setup, choose your preferred interface:
 | Option | Best For |
 |--------|----------|
 | **Discord** | Power users who live in Discord. Channel-per-agent, reactions, threads. |
-| **NanoFlow Console** | Visual dashboard with chat, file browser, terminal, cost analytics. Great for non-technical users. |
+| **ClawSuite Console** | Visual dashboard with chat, file browser, terminal, cost analytics. Great for non-technical users. |
 | **Both** | Use Discord for quick commands + Console for monitoring and file management. |
 
-NanoFlow Console is a branded web dashboard built on [ClawSuite](https://github.com/outsourc-e/clawsuite) (MIT license).
+ClawSuite Console is an open-source web dashboard — see [ClawSuite on GitHub](https://github.com/outsourc-e/clawsuite) (MIT license).
 
 ## Context Persistence (WAL Protocol + 3-Layer Memory)
 
