@@ -2155,8 +2155,16 @@ CADDYSVC
           fi
 
           if command -v caddy &>/dev/null; then
-            ask "Domain name for SSL (e.g., agent.yourdomain.com)"
+            info "SSL requires a domain name pointed at this server's IP."
+            info "If you don't have a domain, press Enter to skip (IP-only, no SSL)."
+            ask "Domain name for SSL (leave blank to skip)"
             read -r CONSOLE_DOMAIN
+
+            if [ -z "$CONSOLE_DOMAIN" ]; then
+              info "Skipping SSL. Console will listen on this server's IP without HTTPS."
+              info "Access via: http://<your-server-ip>:3000"
+              CONSOLE_HOST="0.0.0.0"
+            else
 
             ask "Basic auth username (default: admin)"
             read -r CONSOLE_AUTH_USER
@@ -2210,6 +2218,7 @@ CADDYEOF
             else
               warn "Could not configure Caddy. Set up manually."
               CONSOLE_HOST="0.0.0.0"
+            fi
             fi
           else
             warn "Caddy not available. Falling back to localhost-only mode."
