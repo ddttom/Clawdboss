@@ -26,10 +26,21 @@ NC='\033[0m'
 
 banner() {
   echo ""
-  echo -e "${CYAN}╔══════════════════════════════════════════════╗${NC}"
-  echo -e "${CYAN}║${NC}  ${BOLD}🦞 Clawdboss Setup Wizard${NC}                   ${CYAN}║${NC}"
-  echo -e "${CYAN}║${NC}  Pre-hardened OpenClaw by NanoFlow            ${CYAN}║${NC}"
-  echo -e "${CYAN}╚══════════════════════════════════════════════╝${NC}"
+  echo -e "${CYAN}   ██████╗██╗      █████╗ ██╗    ██╗██████╗ ██████╗  ██████╗ ███████╗███████╗${NC}"
+  echo -e "${CYAN}  ██╔════╝██║     ██╔══██╗██║    ██║██╔══██╗██╔══██╗██╔═══██╗██╔════╝██╔════╝${NC}"
+  echo -e "${CYAN}  ██║     ██║     ███████║██║ █╗ ██║██║  ██║██████╔╝██║   ██║███████╗███████╗${NC}"
+  echo -e "${CYAN}  ██║     ██║     ██╔══██║██║███╗██║██║  ██║██╔══██╗██║   ██║╚════██║╚════██║${NC}"
+  echo -e "${CYAN}  ╚██████╗███████╗██║  ██║╚███╔███╔╝██████╔╝██████╔╝╚██████╔╝███████║███████║${NC}"
+  echo -e "${CYAN}   ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═════╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝${NC}"
+  echo ""
+  echo -e "  Deploy a fully configured AI agent team to any VPS in under 15 minutes."
+  echo -e "  ${BOLD}Multi-agent • Discord/ClawSuite • Memory • Security • On-boarding${NC}"
+  echo ""
+  echo -e "  Plus a curated \"best of OpenClaw\" series of skills, plugins, APIs and"
+  echo -e "  security hardening to have your OpenClaw instance firing out of the box."
+  echo ""
+  echo -e "  Brought to you by the team at ${BOLD}NanoFlow.io${NC} • Enjoy your OpenClaw!"
+  echo -e "  ${BLUE}github.com/NanoFlow-io/clawdboss${NC}"
   echo ""
 }
 
