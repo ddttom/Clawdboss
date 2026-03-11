@@ -113,8 +113,9 @@ During setup, choose your preferred interface:
 | Option | Best For |
 |--------|----------|
 | **Discord** | Power users who live in Discord. Channel-per-agent, reactions, threads. |
+| **Telegram** | Mobile-first. DM your bot or use group topics for multi-agent routing. |
 | **ClawSuite Console** | Visual dashboard with chat, file browser, terminal, cost analytics. Great for non-technical users. |
-| **Both** | Use Discord for quick commands + Console for monitoring and file management. |
+| **Any combination** | Mix and match — Discord + Telegram, Discord + Console, all three, etc. |
 
 ClawSuite Console is an open-source web dashboard — see [ClawSuite on GitHub](https://github.com/outsourc-e/clawsuite) (MIT license).
 
