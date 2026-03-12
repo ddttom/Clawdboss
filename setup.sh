@@ -2210,9 +2210,12 @@ main() {
 
     if [ "$USE_CONSOLE" = true ] && [ -d "$CONSOLE_DIR" ]; then
       local CONSOLE_DEPS_OK=false
-      (cd "$CONSOLE_DIR" && npm install --silent 2>&1 | tail -3) \
-        && { success "Dependencies installed"; CONSOLE_DEPS_OK=true; } \
-        || warn "npm install failed — run manually in $CONSOLE_DIR"
+      if (cd "$CONSOLE_DIR" && npm install --silent 2>&1 | tail -3); then
+        success "Dependencies installed"
+        CONSOLE_DEPS_OK=true
+      else
+        warn "npm install failed — run manually in $CONSOLE_DIR"
+      fi
 
       # Create .env for ClawSuite Console
       CONSOLE_ENV="$CONSOLE_DIR/.env"
@@ -2677,6 +2680,18 @@ JAIL_EOF
   # when UFW is enabled (gateway binds to loopback anyway)
   echo ""
   info "Starting OpenClaw gateway..."
+
+  # Kill any existing gateway so the new config/token takes effect
+  local EXISTING_GW_PID
+  EXISTING_GW_PID=$(lsof -ti :18789 2>/dev/null | head -1 || true)
+  if [ -n "$EXISTING_GW_PID" ]; then
+    info "Stopping existing gateway (PID $EXISTING_GW_PID) to apply new config..."
+    kill "$EXISTING_GW_PID" 2>/dev/null || true
+    sleep 2
+    # Force kill if still running
+    kill -9 "$EXISTING_GW_PID" 2>/dev/null || true
+    sleep 1
+  fi
 
   if [ "$(id -u)" = "0" ]; then
     # Running as root — use tmux (systemd services shouldn't run as root)
