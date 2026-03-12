@@ -989,7 +989,7 @@ if deploy_comms:
         "name": comms_name,
         "workspace": comms_workspace,
         "agentDir": os.path.join(openclaw_dir, "agents", comms_id, "agent"),
-        "model": {"primary": "copilot/claude-sonnet-4.5"},
+        "model": {"primary": config['agents']['defaults']['model']['primary']},
         "identity": {"name": comms_name, "emoji": "\U0001f4e1"}
     })
 
@@ -1013,7 +1013,7 @@ if deploy_research:
         "name": research_name,
         "workspace": research_workspace,
         "agentDir": os.path.join(openclaw_dir, "agents", research_id, "agent"),
-        "model": {"primary": "copilot/claude-sonnet-4.5"},
+        "model": {"primary": config['agents']['defaults']['model']['primary']},
         "identity": {"name": research_name, "emoji": "\U0001f50d"}
     })
 
@@ -1037,7 +1037,7 @@ if deploy_security:
         "name": security_name,
         "workspace": security_workspace,
         "agentDir": os.path.join(openclaw_dir, "agents", security_id, "agent"),
-        "model": {"primary": "copilot/claude-sonnet-4.5"},
+        "model": {"primary": config['agents']['defaults']['model']['primary']},
         "identity": {"name": security_name, "emoji": "\U0001f6e1\ufe0f"}
     })
 
@@ -1080,11 +1080,11 @@ elif llm_provider == "anthropic":
             "baseUrl": "https://api.anthropic.com",
             "apiKey": "${ANTHROPIC_API_KEY}",
             "models": [
-                {"id": "claude-sonnet-4-5-20250514", "name": "Claude Sonnet 4.5", "input": ["text", "image"], "contextWindow": 200000, "maxTokens": 16384}
+                {"id": "claude-sonnet-4-20250514", "name": "Claude Sonnet 4", "input": ["text", "image"], "contextWindow": 200000, "maxTokens": 16384}
             ]
         }
     }
-    config['agents']['defaults']['model']['primary'] = "anthropic/claude-sonnet-4-5-20250514"
+    config['agents']['defaults']['model']['primary'] = "anthropic/claude-sonnet-4-20250514"
 elif llm_provider == "gemini":
     config['models']['providers'] = {
         "google": {
@@ -1138,7 +1138,7 @@ elif llm_provider == "gemini-cli-oauth":
     config['agents']['defaults']['heartbeat']['model'] = "google-gemini-cli/gemini-2.5-flash"
 elif llm_provider == "anthropic-oauth":
     # Setup-token login happens post-setup via openclaw models auth
-    config['agents']['defaults']['model']['primary'] = "anthropic/claude-sonnet-4-5-20250514"
+    config['agents']['defaults']['model']['primary'] = "anthropic/claude-sonnet-4-20250514"
 
 # Skills with keys
 if openai_skills_key:
@@ -1169,6 +1169,13 @@ if gemini_skills_key:
 # Brave Search (only if key provided)
 if brave_key:
     config['tools']['web']['search'] = {"enabled": True, "apiKey": "${BRAVE_API_KEY}"}
+
+# Memory-hybrid plugin requires EMBEDDING_API_KEY (OpenAI).
+# If no embedding key is available, disable the slot to prevent startup errors.
+embedding_key = os.environ.get('CB_OPENAI_SKILLS_KEY', '')
+if not embedding_key:
+    config['plugins']['slots'] = {}
+    config['plugins']['entries']['memory-hybrid']['enabled'] = False
 
 print(json.dumps(config, indent=2))
 PYEOF
@@ -2675,6 +2682,20 @@ JAIL_EOF
     echo ""
   fi
 
+  # ---- Source .env so gateway process inherits API keys ----
+  # The gateway resolves ${VAR} references in openclaw.json and writes
+  # resolved values into agent-level models.json files. If the env vars
+  # aren't set in the gateway process, the literal var name (e.g.
+  # "ANTHROPIC_API_KEY") gets written instead of the actual key.
+  # On macOS, LaunchAgent plists don't inherit shell env vars, so we
+  # source the .env here and export the keys before starting the gateway.
+  if [ -f "$ENV_FILE" ]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+  fi
+
   # ---- Auto-start Gateway ----
   # Must run BEFORE harden_server so the gateway is running
   # when UFW is enabled (gateway binds to loopback anyway)
@@ -2751,6 +2772,7 @@ Restart=on-failure
 RestartSec=5
 Environment=HOME=$HOME
 Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=-$OPENCLAW_DIR/.env
 
 [Install]
 WantedBy=multi-user.target
