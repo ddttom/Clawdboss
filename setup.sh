@@ -502,14 +502,14 @@ collect_keys() {
   # LLM Provider
   echo -e "${BOLD}LLM Provider:${NC}"
   echo ""
-  echo "  ${BOLD}API Key providers:${NC}"
+  echo -e "  ${BOLD}API Key providers:${NC}"
   echo "  1) OpenAI API"
   echo "  2) Anthropic API"
   echo "  3) Google Gemini API"
   echo "  4) OpenRouter (400+ models)"
   echo "  5) Kimi / Moonshot AI"
   echo ""
-  echo "  ${BOLD}OAuth / subscription login (no API key needed):${NC}"
+  echo -e "  ${BOLD}OAuth / subscription login (no API key needed):${NC}"
   echo "  6) GitHub Copilot (free with Copilot subscription)"
   echo "  7) OpenAI Codex OAuth (ChatGPT subscription)"
   echo "  8) Google Gemini CLI OAuth (Google account)"
@@ -1635,7 +1635,7 @@ install_github_skill() {
   fi
 
   # Install the OpenClaw GitHub skill
-  npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install github \
+  npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install --force github \
     && success "GitHub skill installed" \
     || { info "clawhub install failed — copying from bundled skills"; }
 
@@ -1662,7 +1662,7 @@ install_humanizer() {
     return
   fi
 
-  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install humanizer; then
+  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install --force humanizer; then
     success "Humanizer skill installed"
   else
     # Fallback to git clone
@@ -1696,7 +1696,7 @@ install_self_improving() {
     return
   fi
 
-  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install self-improving; then
+  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install --force self-improving; then
     success "Self-Improving Agent skill installed"
   else
     warn "Could not install. Install manually: clawhub install self-improving"
@@ -1723,7 +1723,7 @@ install_find_skills() {
     return
   fi
 
-  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install find-skills; then
+  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install --force find-skills; then
     success "Find Skills installed"
   else
     warn "Could not install. Install manually: clawhub install find-skills"
@@ -1750,7 +1750,7 @@ install_marketing_skills() {
     return
   fi
 
-  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install marketing-skills; then
+  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install --force marketing-skills; then
     success "Marketing Skills installed"
   else
     warn "Could not install. Install manually: clawhub install marketing-skills"
@@ -1807,7 +1807,7 @@ install_playwright() {
     return
   fi
 
-  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install playwright-mcp; then
+  if npx --yes clawhub@latest --workdir "$OPENCLAW_DIR/workspace" install --force playwright-mcp; then
     success "Playwright MCP skill installed"
   else
     warn "clawhub install failed. Install manually: clawhub install playwright-mcp"

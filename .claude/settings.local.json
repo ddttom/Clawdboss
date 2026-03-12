@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(command -v tmux)",
+      "Bash(command -v rg)",
+      "Bash(npm install:*)",
+      "Bash(brew install:*)",
+      "Bash(npx vite:*)",
+      "Bash(xcode-select -p)",
+      "Bash(xcodebuild -version)",
+      "Bash(xcrun --show-sdk-path)"
+    ]
+  }
+}
