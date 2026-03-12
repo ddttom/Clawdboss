@@ -2209,8 +2209,9 @@ main() {
     fi
 
     if [ "$USE_CONSOLE" = true ] && [ -d "$CONSOLE_DIR" ]; then
+      local CONSOLE_DEPS_OK=false
       (cd "$CONSOLE_DIR" && npm install --silent 2>&1 | tail -3) \
-        && success "Dependencies installed" \
+        && { success "Dependencies installed"; CONSOLE_DEPS_OK=true; } \
         || warn "npm install failed — run manually in $CONSOLE_DIR"
 
       # Create .env for ClawSuite Console
@@ -2221,11 +2222,13 @@ CLAWDBOT_GATEWAY_TOKEN=${GATEWAY_TOKEN}
 CONSOLEEOF
       chmod 600 "$CONSOLE_ENV"
 
-      # Build for production
-      info "Building ClawSuite Console..."
-      (cd "$CONSOLE_DIR" && npm run build 2>&1 | tail -3) \
-        && success "ClawSuite Console built successfully" \
-        || warn "Build failed — run 'npm run build' manually in $CONSOLE_DIR"
+      # Build for production (only if npm install succeeded)
+      if [ "$CONSOLE_DEPS_OK" = true ]; then
+        info "Building ClawSuite Console..."
+        (cd "$CONSOLE_DIR" && npm run build 2>&1 | tail -3) \
+          && success "ClawSuite Console built successfully" \
+          || warn "Build failed — run 'npm run build' manually in $CONSOLE_DIR"
+      fi
 
       # SSL + Security setup for ClawSuite Console
       echo ""
@@ -2592,7 +2595,16 @@ JAIL_EOF
   # Install dependencies
   if [ -d "$EXTENSIONS_DIR" ]; then
     info "Installing memory-hybrid npm dependencies..."
-    (cd "$EXTENSIONS_DIR" && npm install --silent 2>&1 | tail -3) \
+    # On macOS, set SDKROOT so native addons (better-sqlite3) can find C++ headers
+    local NPM_ENV=""
+    if [ "$(uname -s)" = "Darwin" ] && command -v xcrun &>/dev/null; then
+      local SDK_PATH
+      SDK_PATH=$(xcrun --show-sdk-path 2>/dev/null)
+      if [ -n "$SDK_PATH" ]; then
+        NPM_ENV="SDKROOT=$SDK_PATH CXXFLAGS=-isystem${SDK_PATH}/usr/include/c++/v1"
+      fi
+    fi
+    (cd "$EXTENSIONS_DIR" && eval $NPM_ENV npm install --silent 2>&1 | tail -3) \
       && success "memory-hybrid dependencies installed" \
       || warn "npm install failed in $EXTENSIONS_DIR — run manually: cd $EXTENSIONS_DIR && npm install"
 
@@ -2600,7 +2612,7 @@ JAIL_EOF
     local OPENCLAW_STATE_DIR="$HOME/.openclaw"
     if [ ! -f "$OPENCLAW_STATE_DIR/node_modules/better-sqlite3/build/Release/better_sqlite3.node" ]; then
       info "Installing better-sqlite3 in $OPENCLAW_STATE_DIR..."
-      (cd "$OPENCLAW_STATE_DIR" && npm install better-sqlite3 --silent 2>&1 | tail -3) \
+      (cd "$OPENCLAW_STATE_DIR" && eval $NPM_ENV npm install better-sqlite3 --silent 2>&1 | tail -3) \
         && success "better-sqlite3 installed" \
         || warn "better-sqlite3 install failed — run: cd $OPENCLAW_STATE_DIR && npm install better-sqlite3"
     fi
