@@ -2278,7 +2278,7 @@ CONSOLEEOF
               [ "$(uname -m)" = "aarch64" ] && CADDY_ARCH="arm64"
               local CADDY_TAG
               CADDY_TAG=$(curl -sS "https://api.github.com/repos/caddyserver/caddy/releases/latest" 2>/dev/null \
-                | grep -oP '"tag_name":\s*"\K[^"]+')
+                | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
 
               if [ -n "$CADDY_TAG" ]; then
                 local CADDY_VER="${CADDY_TAG#v}"
@@ -2813,7 +2813,7 @@ install_skill_deps() {
 
     local TAG
     if [ "$VERSION" = "latest" ]; then
-      TAG=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null | grep -oP '"tag_name":\s*"\K[^"]+')
+      TAG=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
     else
       TAG="$VERSION"
     fi
@@ -3157,7 +3157,7 @@ install_skill_deps() {
     local OPENHUE_ARCH="x86_64"
     [ "$(uname -m)" = "aarch64" ] && OPENHUE_ARCH="arm64"
     local OPENHUE_TAG
-    OPENHUE_TAG=$(curl -s "https://api.github.com/repos/openhue/openhue-cli/releases/latest" 2>/dev/null | grep -oP '"tag_name":\s*"\K[^"]+')
+    OPENHUE_TAG=$(curl -s "https://api.github.com/repos/openhue/openhue-cli/releases/latest" 2>/dev/null | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
     if [ -n "$OPENHUE_TAG" ]; then
       local OPENHUE_URL="https://github.com/openhue/openhue-cli/releases/download/$OPENHUE_TAG/openhue_Linux_${OPENHUE_ARCH}.tar.gz"
       if curl -fsSL -o /tmp/openhue.tar.gz "$OPENHUE_URL" 2>/dev/null; then
@@ -3184,7 +3184,7 @@ install_skill_deps() {
     local HIMA_ARCH="x86_64"
     [ "$(uname -m)" = "aarch64" ] && HIMA_ARCH="aarch64"
     local HIMA_TAG
-    HIMA_TAG=$(curl -s "https://api.github.com/repos/pimalaya/himalaya/releases/latest" 2>/dev/null | grep -oP '"tag_name":\s*"\K[^"]+')
+    HIMA_TAG=$(curl -s "https://api.github.com/repos/pimalaya/himalaya/releases/latest" 2>/dev/null | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
     if [ -n "$HIMA_TAG" ]; then
       local HIMA_URL="https://github.com/pimalaya/himalaya/releases/download/$HIMA_TAG/himalaya.${HIMA_ARCH}-linux.tgz"
       if curl -fsSL -o /tmp/himalaya.tgz "$HIMA_URL" 2>/dev/null; then
